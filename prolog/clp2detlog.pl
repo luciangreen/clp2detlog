@@ -39,4 +39,4 @@ brute(problem(Vs, Ds, Cs), S) :- findall(A, ( maplist([V, V-X]>>( memberchk(V-Lo
 % nodes: partial assignments the plan visits; brute_nodes: partial assignments in the same variable order with no pruning.
 nodes(Pr, N) :- plan(Pr, P), aggregate_all(count, visit(P, []), N).
 visit([step(V, Lo, Hi, Now)|Ss], A0) :- between(Lo, Hi, X), A1 = [V-X|A0], forall(member(C, Now), holds(C, A1)), ( true ; visit(Ss, A1) ).
-brute_nodes(Pr, N) :- Pr = problem(_, Ds, _), plan(Pr, P), findall(V, member(step(V, _, _, _), P), Vs), foldl([V, P0-S0, P-S]>>( memberchk(V-Lo-Hi, Ds), P is P0 * (Hi - Lo + 1), S is S0 + P ), Vs, 1-0, _-N).
+brute_nodes(Pr, N) :- Pr = problem(_, Ds, _), plan(Pr, Plan), findall(V, member(step(V, _, _, _), Plan), Vs), foldl([V, P0-S0, P-S]>>( memberchk(V-Lo-Hi, Ds), P is P0 * (Hi - Lo + 1), S is S0 + P ), Vs, 1-0, _-N).
