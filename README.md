@@ -1,6 +1,6 @@
 # clp2detlog
 
-compile small finite-domain (CLP(FD)-style) problems into a fixed, deterministic search plan: the most constrained variables first, and each constraint checked as soon as all its variables have values. The plan finds exactly the solutions that trying every assignment would, in a set order, while visiting fewer partial assignments. A problem is problem(Vars, Domains, Constraints): Domains are V-Lo-Hi; constraints are ne(X, Y), lt(X, Y), sum(X, Y, C) (X + Y = C) and alldiff(Vs).
+compile small finite-domain (CLP(FD)-style) problems into a fixed, deterministic search plan: the most constrained variables first (the fewest values, and on ties the most constraints), and each constraint checked as soon as all its variables have values. The plan finds exactly the solutions that trying every assignment would, in a set order, while visiting fewer partial assignments. A problem is problem(Vars, Domains, Constraints): Domains are V-Lo-Hi; constraints are ne(X, Y), lt(X, Y), sum(X, Y, C) (X + Y = C) and alldiff(Vs).
 
 ## Use
 
