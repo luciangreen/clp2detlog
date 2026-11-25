@@ -1,5 +1,5 @@
 % clp2detlog: compile small finite-domain (CLP(FD)-style) problems into a fixed, deterministic
-% search plan: the most constrained variables first, and each constraint checked as soon as all
+% search plan: the most constrained variables first (fewest values, then most constraints), and each constraint checked as soon as all
 % its variables have values. The plan finds exactly the solutions that trying every assignment
 % would, in a set order, while visiting fewer partial assignments.
 % A problem is problem(Vars, Domains, Constraints): Domains are V-Lo-Hi; constraints are
@@ -21,8 +21,10 @@ holds(lt(X, Y), A) :- memberchk(X-U, A), memberchk(Y-V, A), U < V.
 holds(sum(X, Y, C), A) :- memberchk(X-U, A), memberchk(Y-V, A), U + V =:= C.
 holds(alldiff(Vs), A) :- maplist([V, X]>>memberchk(V-X, A), Vs, Xs), sort(Xs, S), length(S, N), length(Vs, N).
 
-% plan(+Problem, -Plan): Plan is a list of step(Var, Lo, Hi, ChecksNowComplete), most constrained first.
-plan(problem(Vs, Ds, Cs), P) :- maplist([V, D-V]>>( aggregate_all(count, ( member(C, Cs), vars_of(C, CV), memberchk(V, CV) ), K), D is -K ), Vs, Ks),
+% plan(+Problem, -Plan): Plan is a list of step(Var, Lo, Hi, ChecksNowComplete), most constrained first: the
+% variable with the fewest values first, and on ties the one in the most constraints, then the order given.
+plan(problem(Vs, Ds, Cs), P) :- maplist([V, (Size-D)-V]>>( memberchk(V-Lo-Hi, Ds), Size is Hi - Lo + 1,
+        aggregate_all(count, ( member(C, Cs), vars_of(C, CV), memberchk(V, CV) ), K), D is -K ), Vs, Ks),
     keysort(Ks, Sorted), pairs_values(Sorted, Order),
     foldl([V, Done0-Steps0, Done-Steps]>>( Done = [V|Done0], memberchk(V-Lo-Hi, Ds),
           include([C]>>( vars_of(C, CV), memberchk(V, CV), forall(member(W, CV), memberchk(W, Done)) ), Cs, Now),
